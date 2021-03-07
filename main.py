@@ -1668,6 +1668,7 @@ class UserForm:
         self.fairplay = usr.fairplay()
         self.newbag = usr.new_bag()
         self.friend = usr.friend()
+        self.id = current_user_id()
 
     def validate(self):
         """ Check the current form data for validity
