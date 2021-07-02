@@ -658,6 +658,40 @@ def _userlist(query, spec):
                     }
                 )
 
+    elif query == "ready_timed":
+        if len(online) > MAX_ONLINE:
+            iter_online = random.sample(list(online), MAX_ONLINE)
+        else:
+            iter_online = online
+
+        online_users = User.load_multi(iter_online)
+
+        for user in online_users:
+
+            if not user.is_ready_timed():
+                continue
+
+            id_displayable = user.is_displayable()
+            if user and id_displayable and user.id != cuid:
+                user_id = user.id()
+                chall = user_id in challenges
+
+                result.append(
+                    {
+                        "userid": user_id,
+                        "nick": user.nickname(),
+                        "fullname": user.full_name(),
+                        "human_elo": elo_str(user.human_elo()),
+                        "fav": False if cuser is None else cuser.has_favorite(user_id),
+                        "chall": chall,
+                        "fairplay": user.fairplay(),
+                        "newbag": user.new_bag(),
+                        "ready": user.is_ready() and not chall,
+                        "ready_timed": user.is_ready_timed() and not chall,
+                        "image": user.image()
+                    }
+                )
+
     # Sort the user list. The list is ordered so that users who are
     # ready for any kind of challenge come first, then users who are ready for
     # a timed game, and finally all other users. Each category is sorted
